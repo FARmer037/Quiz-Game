@@ -22,8 +22,8 @@
     }
 
     .question {
-        padding-left: 15rem;
-        
+        display: flex;
+        justify-content: center;
         h5 {
             font-size: 1.2rem;
             line-height: 1.5;
