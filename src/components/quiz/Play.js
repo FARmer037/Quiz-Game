@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet'
-import ques from '../../questions.json'
+import questions from '../../questions.json'
+import M from 'materialize-css'
 
 const Play = () => {
-    const [questions, setQuestions] = useState(ques);
     const [currentQuestion, setCurrentQuestion] = useState({});
     const [nextQuestion, setNextQuestion] = useState({});
     const [previousQuestion, setPreviousQuestion] = useState({});
@@ -12,29 +12,52 @@ const Play = () => {
     const [currentQuestionIndex, setcurrentQuestionIndex] = useState(0);
     const [score, setScore] = useState(0);
     const [correctAnswer, setCorrectAnswer] = useState(0);
-    const [wronngAnswers, setWrongAnswers] = useState(0);
+    const [wrongAnswers, setWrongAnswers] = useState(0);
     const [hints, setHints] = useState(5);
     const [fiftyFifty, setFiftyFifty] = useState(0);
     const [usedFiftyFifty, setUsedFiftyFifty] = useState(false);
     const [time, setTime] = useState({});
 
-    const displayQuestions = () => {
-        if (questions?.length) {
-            setCurrentQuestion(questions[currentQuestionIndex]);
-            setNextQuestion(questions[currentQuestionIndex + 1]);
-            setPreviousQuestion(questions[currentQuestionIndex - 1]);
+    useEffect(() => {
+        const displayQuestions = () => {
+            if (questions?.length) {
+                setCurrentQuestion(questions[currentQuestionIndex]);
+                setNextQuestion(questions[currentQuestionIndex + 1]);
+                setPreviousQuestion(questions[currentQuestionIndex - 1]);
+            }
         }
+        displayQuestions();
+    }, [currentQuestionIndex]);
+
+    const handleOptionClick = (e) => {
+        e.target.innerHTML === currentQuestion.answer ? correct() : wrong();
     }
 
-    useEffect(() => {
-        displayQuestions();
-    }, []);
+    const correct = () => {
+        M.toast({
+            html: 'Correct Answer!',
+            classes: 'toast-valid',
+            displayLength: 1500
+        });
 
-    // console.log("Answer is >> ", answer);
-    console.log("Current Question >> ", currentQuestion);
-    console.log("Previous Question >> ", previousQuestion);
-    console.log("Next Question >> ", nextQuestion);
-    console.log("Answer >> ", currentQuestion.answer);
+        setScore(score + 1);
+        setCorrectAnswer(correctAnswer + 1);
+        setcurrentQuestionIndex(currentQuestionIndex + 1);
+        setNumberOfAnsweredQuestion(numberOfAnsweredQuestion + 1);
+    }
+
+    const wrong = () => {
+        navigator.vibrate(1000);
+        M.toast({
+            html: 'Wrong Answer!',
+            classes: 'toast-invalid',
+            displayLength: 1500
+        });
+
+        setWrongAnswers(wrongAnswers + 1);
+        setcurrentQuestionIndex(currentQuestionIndex + 1);
+        setNumberOfAnsweredQuestion(numberOfAnsweredQuestion + 1);
+    }
 
     return (
         <>
@@ -64,12 +87,12 @@ const Play = () => {
                     <h5>{currentQuestion.question}</h5>
                 </div>
                 <div className="option-container">
-                    <p className="option">{currentQuestion.optionA}</p>
-                    <p className="option">{currentQuestion.optionB}</p>
+                    <p onClick={handleOptionClick} className="option">{currentQuestion.optionA}</p>
+                    <p onClick={handleOptionClick} className="option">{currentQuestion.optionB}</p>
                 </div>
                 <div className="option-container">
-                    <p className="option">{currentQuestion.optionC}</p>
-                    <p className="option">{currentQuestion.optionD}</p>
+                    <p onClick={handleOptionClick} className="option">{currentQuestion.optionC}</p>
+                    <p onClick={handleOptionClick} className="option">{currentQuestion.optionD}</p>
                 </div>
                 <div className="button-container">
                     <button>Previous</button>
