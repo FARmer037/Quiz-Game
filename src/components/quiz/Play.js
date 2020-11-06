@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { Helmet } from 'react-helmet'
 import questions from '../../questions.json'
 import M from 'materialize-css'
+import correctNotification from '../../assets/audio/correct-answer.mp3'
+import wrongNotification from '../../assets/audio/wrong-answer.mp3'
+import buttonNotification from '../../assets/audio/button-sound.mp3'
 
 const Play = () => {
     const [currentQuestion, setCurrentQuestion] = useState({});
@@ -24,13 +27,33 @@ const Play = () => {
                 setCurrentQuestion(questions[currentQuestionIndex]);
                 setNextQuestion(questions[currentQuestionIndex + 1]);
                 setPreviousQuestion(questions[currentQuestionIndex - 1]);
+                setNumberOfQuestion(questions.length);
             }
         }
         displayQuestions();
     }, [currentQuestionIndex]);
 
     const handleOptionClick = (e) => {
-        e.target.innerHTML === currentQuestion.answer ? correct() : wrong();
+        if (e.target.innerHTML === currentQuestion.answer) {
+            setTimeout(() => {
+                document.getElementById('correct-sound').play();
+            }, 250);
+            correct()
+        }
+        else {
+            setTimeout(() => {
+                document.getElementById('wrong-sound').play();
+            }, 250);
+            wrong();
+        }
+    }
+
+    const handleButtonClick = () => {
+        playButtonSound();
+    }
+
+    const playButtonSound = () => {
+        document.getElementById('button-sound').play();
     }
 
     const correct = () => {
@@ -62,6 +85,11 @@ const Play = () => {
     return (
         <>
             <Helmet><title>Quiz Page</title></Helmet>
+            <>
+                <audio id="correct-sound" src={correctNotification}></audio>
+                <audio id="wrong-sound" src={wrongNotification}></audio>
+                <audio id="button-sound" src={buttonNotification}></audio>
+            </>
             <div className="question-container">
                 <h2>Quiz Mode</h2>
                 <div className="lifeline-container">
@@ -76,7 +104,7 @@ const Play = () => {
                 </div>
                 <div className="lifeline-container">
                     <p>
-                        <span>1 of 10</span>
+                        <span>{currentQuestionIndex + 1} of {numberOfQuestion}</span>
                     </p>
                     <p>
                         <span className="lifeline">0.45</span>
@@ -95,9 +123,9 @@ const Play = () => {
                     <p onClick={handleOptionClick} className="option">{currentQuestion.optionD}</p>
                 </div>
                 <div className="button-container">
-                    <button>Previous</button>
-                    <button>Next</button>
-                    <button>Quit</button>
+                    <button onClick={handleButtonClick}>Previous</button>
+                    <button onClick={handleButtonClick}>Next</button>
+                    <button onClick={handleButtonClick}>Quit</button>
                 </div>
             </div>
         </>
