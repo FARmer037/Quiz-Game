@@ -11,6 +11,17 @@
         margin: 0 0 $sm 0;
     }
 
+    .help-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 45px;
+
+        .lifeline {
+            top: 2px;
+        }
+    }
+
     .lifeline-container {
         display: flex;
         justify-content: space-between;
@@ -19,6 +30,16 @@
     .lifeline {
         position: relative;
         top: -3px;
+    }
+
+    .lifeline-icon {
+        color: $green;
+        cursor: pointer;
+    }
+
+    .lifeline-icon:hover {
+        background: none;
+        color: darken($orange, 10%);
     }
 
     .question {
